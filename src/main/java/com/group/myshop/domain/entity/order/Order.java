@@ -14,6 +14,27 @@ public class Order {
     private ShippingInfo shippingInfo;
     private List<OrderLine> orderLines;
     private Money totalAmounts;
+    private String orderNumber;
+    private OrderNo id;
+
+    public OrderNo getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (this == null) return false;
+        if (obj.getClass() != Order.class) return false;
+        Order other = (Order) obj;
+        if (this.orderNumber == null) return false;
+        return this.orderNumber.equals(this.orderNumber);
+    }
+
+    public Order(List<OrderLine> orderLines, ShippingInfo shippingInfo) {
+        setOrderLines(orderLines);
+        setShippingInfo(shippingInfo);
+    }
 
     public void setShippingInfo(ShippingInfo shippingInfo) {
         if (shippingInfo == null) {
@@ -42,7 +63,7 @@ public class Order {
     public void changeShippingInfo(ShippingInfo newShippingInfo) {
         verifyNotYetShipped();
         setShippingInfo(newShippingInfo);
-        // if (!isShippingChangable()) {
+        // if (!isShippingChangable()) { //배송지 정보 변경 가능 여부 확인
         //     throw new IllegalArgumentException("can't change shipping in " + orderState);
         // }
         // this.shippingInfo = newShippingInfo;
@@ -50,7 +71,7 @@ public class Order {
 
     public void cancle() {
         verifyNotYetShipped();
-        this.orderState = OrderState.CANCLED;
+        this.orderState = OrderState.CANCELED;
     }
 
     private void verifyNotYetShipped() {
