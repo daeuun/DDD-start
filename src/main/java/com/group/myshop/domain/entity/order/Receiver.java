@@ -22,6 +22,7 @@ public class Receiver {
         if (this == other) return true;
         if (!(other instanceof Receiver)) return false;
         Receiver that = (Receiver) other;
-        return this.name.equals(that.name) && this.phoneNumber.equals(that.phoneNumber);
+        return this.name.equals(that.name) &&
+                this.phoneNumber.equals(that.phoneNumber);
     }
 }

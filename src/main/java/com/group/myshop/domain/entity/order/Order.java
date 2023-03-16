@@ -1,24 +1,22 @@
 package com.group.myshop.domain.entity.order;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.List;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
+@Entity
+@Table(name = "purchase_order")
 public class Order {
     private OrderState orderState;
     private ShippingInfo shippingInfo;
-    private List<OrderLine> orderLines;
+    private OrderLine orderLines;
     private Money totalAmounts;
     private String orderNumber;
-    private OrderNo id;
+    private OrderNo number;
+    private Orderer orderer;
 
-    public OrderNo getId() {
-        return id;
+    protected Order() {
+
     }
 
     @Override
@@ -31,16 +29,21 @@ public class Order {
         return this.orderNumber.equals(this.orderNumber);
     }
 
-    public Order(List<OrderLine> orderLines, ShippingInfo shippingInfo) {
+    public Order(OrderLine orderLines, ShippingInfo shippingInfo) {
         setOrderLines(orderLines);
         setShippingInfo(shippingInfo);
     }
 
-    public void setShippingInfo(ShippingInfo shippingInfo) {
-        if (shippingInfo == null) {
-            throw new IllegalArgumentException("no shippingInfo!!");
+    private void setShippingInfo(ShippingInfo newShippingInfo) {
+        if (shippingInfo == null) throw new IllegalArgumentException("no shippingInfo!!");
+        setShippingInfo(newShippingInfo);
+    }
+
+    private void setOrderState(OrderState state) {
+        if (state == null) {
+            throw new IllegalArgumentException("no OrderState!!");
         }
-        this.shippingInfo = shippingInfo;
+        this.orderState = state;
     }
 
     public void setOrderLines(List<OrderLine> orderLines) {
@@ -56,17 +59,20 @@ public class Order {
     }
 
     private void calculateTotalAmounts() {
-        int sum = orderLines.stream().mapToInt(x -> x.getAmounts()).sum();
+        int sum = orderLines.stream().mapToInt(x -> x.getAmounts().getValue()).sum();
         this.totalAmounts = new Money(sum);
+
     }
 
     public void changeShippingInfo(ShippingInfo newShippingInfo) {
         verifyNotYetShipped();
         setShippingInfo(newShippingInfo);
-        // if (!isShippingChangable()) { //배송지 정보 변경 가능 여부 확인
-        //     throw new IllegalArgumentException("can't change shipping in " + orderState);
-        // }
-        // this.shippingInfo = newShippingInfo;
+        checkShippingInfoChangeable(); //배송지 변경 가능 여부 확인
+        this.shippingInfo = newShippingInfo;
+    }
+
+    private void checkShippingInfoChangeable() {
+
     }
 
     public void cancle() {
@@ -83,4 +89,14 @@ public class Order {
     private boolean isShippingChangable() {
         return orderState == OrderState.PAYMENT_WAITING || orderState == OrderState.PREPARING;
     }
+
+    public void changeOrderLines(List<OrderLine> newLines) {
+        orderLines.changeOrderLines(newLines);
+        this.totalAmounts = orderLines.getTotalAmounts();
+    }
+
+    public Orderer getOrderer() {
+        return orderer;
+    }
+
 }

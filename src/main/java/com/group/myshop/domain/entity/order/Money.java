@@ -23,6 +23,6 @@ public class Money {
     }
 
     public Money add(Money money) {
-        return new Money(this.value + money.value);
+        return new Money(this.value + money.value); // 변경한 데이터를 갖는 새로운 객체 생성
     }
 }

@@ -1,14 +1,15 @@
 package com.group.myshop.domain.entity.order;
 
-import java.util.List;
 
 public class UserInfo {
     private String id;
     private String name;
+    private Orderer orderer;
+    private OrderLine orderLines;
 
     public UserInfo() {}
 
-    public Order(Orderer orderer, List<OrderLine> orderLines, ShippingInfo shippingInfo, OrderState orderState) {
+    public void Order(Orderer orderer, OrderLine orderLines, ShippingInfo shippingInfo, OrderState orderState) {
         setOrderer(orderer);
         setOrderLines(orderLines);
     }
@@ -18,39 +19,23 @@ public class UserInfo {
         this.orderer = orderer;
     }
 
-    private void setOrderLines(List<OrderLine> orderLines) {
+    private void setOrderLines(OrderLine orderLines) {
         verifyAtLeastOneOrMoreOrderLines(orderLines);
         this.orderLines = orderLines;
         calculateTotalAmounts();
     }
 
-    private void verifyAtLeastOneOrMoreOrderLines(List<OrderLine> orderLines) {
+    private void verifyAtLeastOneOrMoreOrderLines(OrderLine orderLines) {
         if (orderLines == null || orderLines.isEmpty()) {
             throw new IllegalArgumentException("no OrderLine");
         }
     }
 
     private void calculateTotalAmounts() {
-        this.totalAmounts = orderLines.stream().mapToInt(x -> x.getAbount()).sum();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.totalAmounts = orderLines.stream().mapToInt(x -> x.getAmount()).sum();
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setOrderState(OrderState state) {
-
     }
 }
